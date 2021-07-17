@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe AnswersController, type: :controller do
-  let(:user) { create(:user) }
+  let(:user)     { create(:user) }
   let(:question) { create(:question, user: user) }
-  let(:answer) { create(:answer, question: question, user: user) }
+  let(:answer)   { create(:answer, question: question, user: user) }
 
   describe 'POST #create' do
     before { login(user) }
@@ -50,10 +50,11 @@ RSpec.describe AnswersController, type: :controller do
   end
 
   describe 'GET #edit' do
+    before { login(user) }
     before { get :edit, params: { id: answer } }
 
     it 'assigns the requested answer to @answer' do
-      expect(assigns(:answer)).to eq(@answer)
+      expect(assigns(:answer)).to eq(answer)
     end
 
     it 'renders edit view' do
@@ -62,10 +63,12 @@ RSpec.describe AnswersController, type: :controller do
   end
 
   describe 'PATCH #update' do
+    before { login(user) }
+    
     context 'with valid attributes' do
       it 'assigns the requested answer to @answer' do
         patch :update, params: { id: answer, question_id: question, answer: attributes_for(:answer) }
-        expect(assigns(:answer)).to eq(@answer)
+        expect(assigns(:answer)).to eq(answer)
       end
 
       it 'change answer attributes' do
@@ -102,7 +105,7 @@ RSpec.describe AnswersController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
-    let(:author) { create(:user) }
+    let(:author)         { create(:user) }
     let!(:author_answer) { create(:answer, question: question, user: author) }
 
     context 'user an author' do

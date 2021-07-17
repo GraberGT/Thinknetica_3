@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 feature 'User can delete answer' do
-  given(:author) { create(:user) }
-  given(:user) { create(:user) }
+  given(:author)    { create(:user) }
+  given(:user)      { create(:user) }
   given!(:question) { create(:question, user: user) }
-  given!(:answer) { create(:answer, question: question, user: author) }
+  given!(:answer)   { create(:answer, question: question, user: author) }
 
   scenario 'Author delete answer' do
     sign_in(author)

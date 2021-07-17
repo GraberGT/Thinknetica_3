@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 feature 'User can delete question' do
-  given(:author) { create(:user) }
+  given(:author)        { create(:user) }
   given(:any_auth_user) { create(:user) }
-  given(:question) { create(:question, user: author) }
+  given(:question)      { create(:question, user: author) }
 
   scenario 'Author remove question' do
     sign_in(author)

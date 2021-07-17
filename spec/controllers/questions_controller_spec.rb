@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe QuestionsController, type: :controller do
-  let(:user) { create(:user) }
+  let(:user)     { create(:user) }
   let(:question) { create(:question, user: user) }
 
   describe 'GET #index' do
@@ -75,10 +75,11 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe 'GET #edit' do
+    before { login(user) }
     before { get :edit, params: { id: question } }
 
     it 'assigns the requested question to @question' do
-      expect(assigns(:question)).to eq(@question)
+      expect(assigns(:question)).to eq(question)
     end
 
     it 'renders edit view' do
@@ -87,10 +88,12 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
   describe 'PATCH #update' do
+    before { login(user) }
+
     context 'with valid attributes' do
       it 'aasigns the requested question to @question' do
         patch :update, params: { id: question, question: attributes_for(:question) }
-        expect(assigns(:question)).to eq(@question)
+        expect(assigns(:question)).to eq(question)
       end
 
       it 'change question attributes' do
