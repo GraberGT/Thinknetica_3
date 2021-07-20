@@ -4,7 +4,7 @@ class Answer < ApplicationRecord
   belongs_to :question
   belongs_to :user
 
-  validates :body, presence: true
+  validates :title, presence: true
   validate :best_count, on: :best
 
   default_scope -> { order('best DESC, created_at') }
