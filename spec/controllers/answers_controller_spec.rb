@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe AnswersController, type: :controller do
-  let(:user)     { create(:user) }
-  let(:question) { create(:question, user: user) }
-  let(:answer)   { create(:answer, question: question, user: user) }
+  let(:user)      { create(:user) }
+  let(:question)  { create(:question, user: user) }
+  let(:answer)    { create(:answer, question: question, user: user) }
 
   describe 'POST #create' do
     before { login(user) }
@@ -14,18 +14,23 @@ RSpec.describe AnswersController, type: :controller do
           post :create, params: {
             answer: attributes_for(:answer),
             question_id: question
-          }
+          }, format: :js
         end.to change(question.answers, :count).by(1)
       end
 
       it 'assigns a new answer to question' do
-        post :create, params: { answer: attributes_for(:answer), question_id: question }
-        expect(assigns(:answer).question).to eq(question)
+        post :create, params: { answer: attributes_for(:answer), question_id: question, format: :js }
+        expect(assigns(:answer).question).to eq question
+      end
+
+      it 'assign created answer by current user' do
+        post :create, params: { answer: attributes_for(:answer), question_id: question, format: :js }
+        expect(assigns(:answer).user).to eq user
       end
 
       it 'redirects to question show view' do
-        post :create, params: { answer: attributes_for(:answer), question_id: question }
-        expect(response).to redirect_to assigns(:question)
+        post :create, params: { answer: attributes_for(:answer), question_id: question, format: :js }
+        expect(response).to render_template :create
       end
     end
 
@@ -33,91 +38,68 @@ RSpec.describe AnswersController, type: :controller do
       it 'does not save the answer' do
         expect do
           post :create, params: {
-            answer: attributes_for(:answer, :invalid_answer),
-            question_id: question
+            answer: attributes_for(:answer, :invalid),
+            question_id: question,
+            format: :js
           }
         end.to_not change(question.answers, :count)
       end
 
       it 're-renders new view' do
         post :create, params: {
-          answer: attributes_for(:answer, :invalid_answer),
-          question_id: question
+          answer: attributes_for(:answer, :invalid),
+          question_id: question,
+          format: :js
         }
-        expect(response).to render_template 'questions/show'
+        expect(response).to render_template :create
       end
-    end
-  end
-
-  describe 'GET #edit' do
-    before { login(user) }
-    before { get :edit, params: { id: answer } }
-
-    it 'assigns the requested answer to @answer' do
-      expect(assigns(:answer)).to eq(answer)
-    end
-
-    it 'renders edit view' do
-      expect(response).to render_template :edit
     end
   end
 
   describe 'PATCH #update' do
-    before { login(user) }
-    
+    let(:author)          { create(:user) }
+    let!(:author_answer)  { create(:answer, question: question, user: author) }
+
     context 'with valid attributes' do
-      it 'assigns the requested answer to @answer' do
-        patch :update, params: { id: answer, question_id: question, answer: attributes_for(:answer) }
-        expect(assigns(:answer)).to eq(answer)
+      before { login(author) }
+
+      it 'changes answer attributes' do
+        patch :update, params: { id: author_answer, answer: { title: 'new title' } }, format: :js
+        author_answer.reload
+        expect(author_answer.title).to eq 'new title'
       end
 
-      it 'change answer attributes' do
-        patch :update, params: { id: answer, question_id: question, answer: { title: 'MyString' } }
-        answer.reload
-
-        expect(answer.title).to eq 'MyString'
-      end
-
-      it 'redirects to updated question' do
-        patch :update, params: { id: answer, question_id: question, answer: attributes_for(:answer) }
-        expect(response).to redirect_to question
+      it 'renders update view' do
+        patch :update, params: { id: answer, answer: { title: 'new title' } }, format: :js
+        expect(response).to redirect_to answer.question
       end
     end
 
     context 'with invalid attributes' do
-      before do 
-        patch :update, params: {
-          id: answer,
-          question_id: question,
-          answer: attributes_for(:answer, :invalid_answer)
-        }
-      end
+      before { login(author) }
 
-      it 'does not change question' do
-        answer.reload
-        expect(answer.title).to eq 'MyString'
-      end
-
-      it 're-renders edit view' do
-        expect(response).to render_template :edit
+      it 'does not change answer attributes' do
+        expect do
+          patch :update, params: { id: author_answer, answer: attributes_for(:answer, :invalid) }, format: :js
+        end.to_not change(author_answer, :title)
       end
     end
   end
 
   describe 'DELETE #destroy' do
-    let(:author)         { create(:user) }
-    let!(:author_answer) { create(:answer, question: question, user: author) }
+    let(:author)          { create(:user) }
+    let!(:author_answer)  { create(:answer, question: question, user: author) }
 
     context 'user an author' do
       before { login(author) }
 
       it 'delete the answer' do
-        expect { delete :destroy, params: { id: author_answer } }.to change(question.answers, :count).by(-1)
+        expect { delete :destroy, params: { id: author_answer }, format: :js }.to change(question.answers, :count).by(-1)
       end
 
-      it 'redirects to question show' do
-        delete :destroy, params: { id: author_answer }
-        expect(response).to redirect_to question
+      it 're-render question show' do
+        delete :destroy, params: { id: author_answer, format: :js }
+        expect(response).to render_template :destroy
       end
     end
 
@@ -125,12 +107,25 @@ RSpec.describe AnswersController, type: :controller do
       before { login(user) }
 
       it 'delete the question' do
-        expect { delete :destroy, params: { id: author_answer } }.to_not change(Answer, :count)
+        expect { delete :destroy, params: { id: author_answer }, format: :js }.to_not change(Answer, :count)
+      end
+    end
+  end
+
+  describe 'PATCH #best' do
+    let(:author)  { create(:user) }
+    let!(:answer) { create(:answer, question: question, user: author) }
+
+    context 'user an author' do
+      before { login(author) }
+      before { patch :best, params: { id: answer, format: :js } }
+
+      it 'assigns the request answer to @answer' do
+        expect(assigns(:answer)).to eq answer
       end
 
-      it 'redirects to question show' do
-        delete :destroy, params: { id: author_answer }
-        expect(response).to redirect_to author_answer.question
+      it 'render answer best' do
+        expect(response).to render_template :best
       end
     end
   end

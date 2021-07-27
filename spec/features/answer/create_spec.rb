@@ -6,10 +6,10 @@ feature 'User can create answer', %q{
   can write the answer to the question
 } do
 
-  given(:user)      { create(:user) }
-  given!(:question) { create(:question, user: user) }
+  given(:user)       { create(:user) }
+  given!(:question)  { create(:question, user: user) }
 
-  scenario 'Authenticated user answer the question' do
+  scenario 'Authenticated user answer the question', js: true do
     sign_in(user)
 
     visit question_path(question)
@@ -21,7 +21,7 @@ feature 'User can create answer', %q{
     expect(page).to have_content 'answer title'
   end
 
-  scenario 'Authenticated user answer the question with error' do
+  scenario 'Authenticated user answer the question with error', js: true do
     sign_in(user)
 
     visit question_path(question)
