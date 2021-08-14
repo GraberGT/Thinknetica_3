@@ -49,7 +49,7 @@ feature 'User can edit his answer', %q{
     scenario 'edits his answer with attach files' do
       within '.answers' do
         fill_in 'Your answer', with: 'edited answer'
-        attach_file 'File', ["#{Rails.root.join('spec/rails_helper.rb')}", "#{Rails.root.join('spec/spec_helper.rb').to_s}"]
+        attach_files
         click_on 'Save'
 
         expect(page).to_not have_selector 'file'

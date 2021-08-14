@@ -52,7 +52,7 @@ feature 'User can edit his question', %q{
         fill_in 'Your title', with: 'Question title'
         fill_in 'Your body', with: 'Question body'
 
-        attach_file 'File', ["#{Rails.root.join('spec/rails_helper.rb')}", "#{Rails.root.join('spec/spec_helper.rb').to_s}"]
+        attach_files
         click_on 'Save'
 
         expect(page).to_not have_selector 'file'
