@@ -49,12 +49,26 @@ feature 'User can edit his answer', %q{
     scenario 'edits his answer with attach files' do
       within '.answers' do
         fill_in 'Your answer', with: 'edited answer'
-        attach_file 'File', ["#{Rails.root.join('spec/rails_helper.rb')}", "#{Rails.root.join('spec/spec_helper.rb').to_s}"]
+        attach_files
         click_on 'Save'
 
         expect(page).to_not have_selector 'file'
         expect(page).to have_link 'rails_helper.rb'
         expect(page).to have_link 'spec_helper.rb'
+      end
+    end
+
+    scenario 'edits his answer by adding a link' do
+      within '.answers' do
+        click_on 'add link'
+
+        fill_in 'Link name', with: 'Thinknetica'
+        fill_in 'Url', with: "http://thinknetica.com"
+
+        click_on 'Save'
+
+        expect(page).to have_link 'Thinknetica', href: "http://thinknetica.com"
+        expect(page).to_not have_selector 'textfield'
       end
     end
 
