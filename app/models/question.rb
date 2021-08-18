@@ -1,4 +1,6 @@
 class Question < ApplicationRecord
+  include Likable
+
   belongs_to :user
   has_one :badge, dependent: :destroy
   has_many :answers, dependent: :destroy

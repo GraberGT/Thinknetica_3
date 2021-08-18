@@ -1,4 +1,4 @@
-class AddUserToAnswers < ActiveRecord::Migration[5.2]
+class AddUserToAnswers < ActiveRecord::Migration[6.1]
   def change
     add_reference :answers, :user, foreign_key: true, null: false
   end
