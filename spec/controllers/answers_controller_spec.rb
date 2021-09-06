@@ -68,11 +68,6 @@ RSpec.describe AnswersController, type: :controller do
         author_answer.reload
         expect(author_answer.title).to eq 'new title'
       end
-
-      it 'renders update view' do
-        patch :update, params: { id: answer, answer: { title: 'new title' } }, format: :js
-        expect(response).to redirect_to answer.question
-      end
     end
 
     context 'with invalid attributes' do
