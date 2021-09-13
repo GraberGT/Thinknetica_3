@@ -43,6 +43,7 @@ class QuestionsController < ApplicationController
     if current_user.author?(@question)
       @question.destroy
       redirect_to questions_path, notice: 'Question successfully deleted.'
+    end
   end
 
   private
