@@ -18,6 +18,8 @@ module Thinknetica3
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    config.active_job.queue_adapter = :sidekiq
+
     config.action_cable.disable_request_forgery_protection = false
 
     config.autoload_paths += [config.root.join('app')]
