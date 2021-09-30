@@ -14,7 +14,7 @@ class Answer < ApplicationRecord
   validates :title, presence: true
   validate :best_count, on: :best
 
-  after_save :notify, on: create
+  after_create
 
   default_scope -> { order('best DESC, created_at') }
   scope :best, -> { where(best: true) }
