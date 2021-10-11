@@ -30,6 +30,7 @@ gem 'bootsnap', '>= 1.4.4'
 gem 'slim-rails'
 gem 'devise'
 gem 'jquery-rails'
+gem 'bootstrap'
 gem "cocoon"
 gem "octokit", "~> 4.0"
 gem "skim"
