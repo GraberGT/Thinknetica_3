@@ -1,4 +1,4 @@
-class AddAdminFlagToUsers < ActiveRecord::Migration[6.1]
+class AddAdminFlagToUsers < ActiveRecord::Migration[5.2]
   def change
   end
 end

@@ -1,4 +1,4 @@
-class CreateSubscriptions < ActiveRecord::Migration[6.1]
+class CreateSubscriptions < ActiveRecord::Migration[5.2]
   def change
     create_table :subscriptions do |t|
       t.references :user, foreign_key: true
