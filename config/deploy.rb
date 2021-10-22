@@ -5,6 +5,7 @@ set :application, "qna"
 set :repo_url, "https://github.com/GraberGT/Thinknetica_3.git"
 set :rvm_ruby_version, '2.7.2'
 set :pty, false
+set :init_system, :systemd
 
 # Default deploy_to directory is /var/www/my_app_name
 set :deploy_to, "/home/deployer/qna"
